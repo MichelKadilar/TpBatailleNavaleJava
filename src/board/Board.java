@@ -1,3 +1,5 @@
+package board;
+
 public class Board {
     protected String nom;
     private Character[][] navires;
