@@ -97,7 +97,7 @@ public class Board implements IBoard {
     }
 
     @Override
-    public void putShip(AbstractShip ship, int x, int y) {
+    public void putShip(AbstractShip ship, int x, int y) throws ShipPosOutOfBoardError, ShipSuperpositionError {
         if (x > 0 && y > 0) {
             int realX = x - 1;
             int realY = y - 1;
@@ -105,26 +105,50 @@ public class Board implements IBoard {
             char labelShip = ship.getLabel();
             if (ship.getOrientation() == Direction.EAST) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realX + i < this.tailleGrille && (!this.hasShip(realX + i, realY))) {
-                        navires[realY][realX + i] = labelShip;
+                    if (realX + i < this.tailleGrille) {
+                        if ((!this.hasShip(realX + i, realY))) {
+                            navires[realY][realX + i] = labelShip;
+                        } else {
+                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + (realX + i) + " et y=" + realY);
+                        }
+                    } else {
+                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + (realX + i) + " et y=" + realY);
                     }
                 }
             } else if (ship.getOrientation() == Direction.WEST) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realX - i >= 0 && (!this.hasShip(realX - i, realY))) {
-                        navires[realY][realX - i] = labelShip;
+                    if (realX - i >= 0) {
+                        if ((!this.hasShip(realX - i, realY))) {
+                            navires[realY][realX - i] = labelShip;
+                        } else {
+                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + (realX - i) + " et y=" + realY);
+                        }
+                    } else {
+                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + (realX - i) + " et y=" + realY);
                     }
                 }
             } else if (ship.getOrientation() == Direction.NORTH) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realY + i < this.tailleGrille && (!this.hasShip(realX, realY + i))) {
-                        navires[realY + i][realX] = labelShip;
+                    if (realY + i < this.tailleGrille) {
+                        if ((!this.hasShip(realX, realY + i))) {
+                            navires[realY + i][realX] = labelShip;
+                        } else {
+                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + realX + " et y=" + (realY + i));
+                        }
+                    } else {
+                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + realX + " et y=" + (realY + i));
                     }
                 }
             } else if (ship.getOrientation() == Direction.SOUTH) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realY - i >= 0 && (!this.hasShip(realX, realY - i))) {
-                        navires[realY - i][realX] = labelShip;
+                    if (realY - i >= 0) {
+                        if ((!this.hasShip(realX, realY - i))) {
+                            navires[realY - i][realX] = labelShip;
+                        } else {
+                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + realX + " et y=" + (realY - i));
+                        }
+                    } else {
+                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + realX + " et y=" + (realY - i));
                     }
                 }
             }
