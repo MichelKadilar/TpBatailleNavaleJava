@@ -11,9 +11,9 @@ public class TestBoard {
         System.out.println(board.getSize());
         Destroyer destroyer = new Destroyer();
         Battleship battleship = new Battleship(Direction.WEST);
-        board.print();
         board.putShip(destroyer, 4,4);
         board.putShip(battleship, 4,4);
+        board.setHit(false, 4,4);
         board.print();
     }
 }

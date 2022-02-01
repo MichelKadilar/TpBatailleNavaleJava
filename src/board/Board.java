@@ -40,7 +40,7 @@ public class Board implements IBoard {
         for (int i = 0; i < this.tailleGrille; i++) {
             System.out.print(i + 1);
             int j = 0;
-            if (i == this.tailleGrille) {
+            if (i == this.tailleGrille - 1) {
                 if (navires[i][j] != null) {
                     System.out.print(" " + navires[i][j]);
                 } else {
@@ -60,7 +60,7 @@ public class Board implements IBoard {
         }
     }
 
-    private void printGrilleFrappe() {
+    public void printGrilleFrappe() {
         System.out.println("Frappes :");
         char[] tabAlphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
         System.out.print("   ");
@@ -68,15 +68,23 @@ public class Board implements IBoard {
             System.out.print(c + "  ");
         }
         System.out.println();
-        for (int i = 1; i < 11; i++) {
-            System.out.print(i);
+        for (int i = 0; i < this.tailleGrille; i++) {
+            System.out.print(i + 1);
             int j = 0;
-            if (i == 10) {
-                System.out.print(" .");
+            if (i == this.tailleGrille - 1) {
+                if (frappes[i][j]) {
+                    System.out.print("  X");
+                } else {
+                    System.out.print(" .");
+                }
                 j++;
             }
-            while (j < 10) {
-                System.out.print("  .");
+            while (j < this.tailleGrille) {
+                if (frappes[i][j]) {
+                    System.out.print("  X");
+                } else {
+                    System.out.print("  .");
+                }
                 j++;
             }
             System.out.println();
@@ -97,25 +105,25 @@ public class Board implements IBoard {
             char labelShip = ship.getLabel();
             if (ship.getOrientation() == Direction.EAST) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realX + i < this.tailleGrille && navires[realY][realX + i] == null) {
+                    if (realX + i < this.tailleGrille && (!this.hasShip(realX + i, realY))) {
                         navires[realY][realX + i] = labelShip;
                     }
                 }
             } else if (ship.getOrientation() == Direction.WEST) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realX - i >= 0 && navires[realY][realX - i] == null) {
+                    if (realX - i >= 0 && (!this.hasShip(realX - i, realY))) {
                         navires[realY][realX - i] = labelShip;
                     }
                 }
             } else if (ship.getOrientation() == Direction.NORTH) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realY + i < this.tailleGrille && navires[realY + i][realX] == null) {
+                    if (realY + i < this.tailleGrille && (!this.hasShip(realX, realY + i))) {
                         navires[realY + i][realX] = labelShip;
                     }
                 }
             } else if (ship.getOrientation() == Direction.SOUTH) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realY - i >= 0 && navires[realY - i][realX] == null) {
+                    if (realY - i >= 0 && (!this.hasShip(realX, realY - i))) {
                         navires[realY - i][realX] = labelShip;
                     }
                 }
@@ -124,17 +132,19 @@ public class Board implements IBoard {
     }
 
     @Override
-    public boolean hasShip(int x, int y) {
-        return false;
+    public boolean hasShip(int x, int y) { // L'écart de -1 dans les coordonnées est pris en compte directement dans la méthode putShip()
+        // Avec realX et realY.
+        return navires[y][x] != null;
     }
 
     @Override
     public void setHit(boolean hit, int x, int y) {
-
+        hit = navires[y - 1][x - 1] != null;
+        frappes[y - 1][x - 1] = hit;
     }
 
     @Override
     public Boolean getHit(int x, int y) {
-        return null;
+        return frappes[y - 1][x - 1];
     }
 }
