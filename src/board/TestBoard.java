@@ -7,19 +7,30 @@ import ships.ShipState;
 
 public class TestBoard {
 
-    public static void main(String[] args) throws ShipPosOutOfBoardError, ShipSuperpositionError {
+    public static void main(String[] args) throws ShipPosOutOfBoardError, ShipSuperpositionError, ShipStruckAtSamePosError {
         Board board = new Board("Bataille Navale");
         System.out.println(board.getSize());
-        Destroyer destroyer = new Destroyer();
-        Battleship battleship = new Battleship(Direction.WEST);
+        ShipState s = new ShipState(new Destroyer(), false);
+        ShipState s2 = new ShipState(new Battleship(Direction.WEST), false);
         // Il faut faire un try catch pour putship ici, mais je ne sais pas encore quoi faire dans le catch
-        board.putShip(destroyer, 4,4);
-        board.putShip(battleship, 8,8);
-        board.setHit(false, 4,4);
-        board.setHit(false, 5,4);
-        ShipState s = new ShipState(destroyer, false);
-        board.setHit(false, 4,4);
+        board.putShip(s.getShip(), 4, 4);
+        board.putShip(s2.getShip(), 8, 8);
+        System.out.println(board.hasShip(4 - 1, 4 - 1)); // le destroyer : "s.getShip()"
+        System.out.println(board.hasShip(4, 4 - 1)); // le destroyer : "s.getShip()"
+        TestBoard.printIfHitSunkAShip(board.sendHit(4, 4), s.isSunk());
+        TestBoard.printIfHitSunkAShip(board.sendHit(4, 4), s.isSunk());
+        TestBoard.printIfHitSunkAShip(board.sendHit(5, 4), s.isSunk());
+        System.out.println(board.hasShip(4, 4));
+        //board.sendHit(4, 4);
+        board.sendHit(6, 4);
         board.print();
         System.out.println(s.isSunk());
+        //System.out.println(hit.toString());
+    }
+
+    private static void printIfHitSunkAShip(Hit sendHit, boolean isSunk) {
+        if (isSunk) {
+            System.out.println(sendHit.toString() + " est coulé");
+        }
     }
 }

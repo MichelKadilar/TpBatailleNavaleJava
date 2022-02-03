@@ -163,20 +163,60 @@ public class Board implements IBoard {
     @Override
     public boolean hasShip(int x, int y) { // L'écart de -1 dans les coordonnées est pris en compte directement dans la méthode putShip()
         // Avec realX et realY.
-        return navires[y][x] != null;
+        if (navires[y][x] == null || navires[y][x].getShip().isSunk()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override
-    public void setHit(boolean hit, int x, int y) {
+    public void setHit(boolean hit, int x, int y) throws ShipStruckAtSamePosError {
+        if (frappes[y - 1][x - 1] != null) {
+            throw new ShipStruckAtSamePosError("Le navire : " + navires[y - 1][x - 1].getShip().getShipName() + " de votre adversaire a déjà été touché aux positions x = " + x + " et y = " + y);
+        }
         hit = navires[y - 1][x - 1] != null;
         frappes[y - 1][x - 1] = hit;
-        if(hit){
-            this.navires[y-1][x-1].addStrike();
+        if (hit) {
+            this.navires[y - 1][x - 1].addStrike();
         }
     }
 
     @Override
     public Boolean getHit(int x, int y) {
         return frappes[y - 1][x - 1];
+    }
+
+    @Override
+    public Hit sendHit(int x, int y) throws ShipStruckAtSamePosError {
+        try {
+            this.setHit(false, x, y);
+        } catch (ShipStruckAtSamePosError e) {
+            System.out.println("Votre tir aux coordonnées x = " + x + " et y = " + y + " n'est pas valide car vous l'avez déjà réalisé auparavant");
+        }
+        if (Boolean.TRUE.equals(this.getHit(x, y))) {
+            char currentShipLabel = navires[y - 1][x - 1].getShip().getLabel();
+            boolean isCurrentShipSunk = navires[y - 1][x - 1].isSunk();
+            if (currentShipLabel == 'D') {
+                if (isCurrentShipSunk) {
+                    return Hit.DESTROYER;
+                }
+            } else if (currentShipLabel == 'B') {
+                if (isCurrentShipSunk) {
+                    return Hit.BATTLESHIP;
+                }
+            } else if (currentShipLabel == 'S') {
+                if (isCurrentShipSunk) {
+                    return Hit.SUBMARINE;
+                }
+            } else if (currentShipLabel == 'C') {
+                if (isCurrentShipSunk) {
+                    return Hit.CARRIER;
+                }
+            }
+            return Hit.STRIKE;
+        } else {
+            return Hit.MISS;
+        }
     }
 }
