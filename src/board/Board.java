@@ -1,26 +1,28 @@
 package board;
 
+import color.ColorUtil;
 import ships.AbstractShip;
 import ships.Direction;
+import ships.ShipState;
 
 public class Board implements IBoard {
     private String nom;
-    private Character[][] navires;
-    private boolean[][] frappes;
+    private ShipState[][] navires;
+    private Boolean[][] frappes;
     private final int tailleGrille;
 
     public Board(String nom, int tailleGrille) {
         this.nom = nom;
         this.tailleGrille = tailleGrille;
-        navires = new Character[this.tailleGrille][this.tailleGrille];
-        frappes = new boolean[this.tailleGrille][this.tailleGrille];
+        navires = new ShipState[this.tailleGrille][this.tailleGrille];
+        frappes = new Boolean[this.tailleGrille][this.tailleGrille];
     }
 
     public Board(String nom) {
         this.nom = nom;
         this.tailleGrille = 10;
-        navires = new Character[this.tailleGrille][this.tailleGrille];
-        frappes = new boolean[this.tailleGrille][this.tailleGrille];
+        navires = new ShipState[this.tailleGrille][this.tailleGrille];
+        frappes = new Boolean[this.tailleGrille][this.tailleGrille];
     }
 
     public void print() {
@@ -42,7 +44,7 @@ public class Board implements IBoard {
             int j = 0;
             if (i == this.tailleGrille - 1) {
                 if (navires[i][j] != null) {
-                    System.out.print(" " + navires[i][j]);
+                    System.out.print(" " + navires[i][j].getShip().getLabel());
                 } else {
                     System.out.print(" .");
                 }
@@ -50,7 +52,7 @@ public class Board implements IBoard {
             }
             while (j < this.tailleGrille) {
                 if (navires[i][j] != null) {
-                    System.out.print("  " + navires[i][j]);
+                    System.out.print("  " + navires[i][j].getShip().getLabel());
                 } else {
                     System.out.print("  .");
                 }
@@ -72,16 +74,20 @@ public class Board implements IBoard {
             System.out.print(i + 1);
             int j = 0;
             if (i == this.tailleGrille - 1) {
-                if (frappes[i][j]) {
-                    System.out.print("  X");
+                if (Boolean.FALSE.equals(frappes[i][j])) {
+                    System.out.print(" X");
+                } else if (Boolean.TRUE.equals(frappes[i][j])) {
+                    System.out.print(" " + ColorUtil.colorize("X", ColorUtil.Color.RED));
                 } else {
                     System.out.print(" .");
                 }
                 j++;
             }
             while (j < this.tailleGrille) {
-                if (frappes[i][j]) {
+                if (Boolean.FALSE.equals(frappes[i][j])) {
                     System.out.print("  X");
+                } else if (Boolean.TRUE.equals(frappes[i][j])) {
+                    System.out.print("  " + ColorUtil.colorize("X", ColorUtil.Color.RED));
                 } else {
                     System.out.print("  .");
                 }
@@ -102,12 +108,11 @@ public class Board implements IBoard {
             int realX = x - 1;
             int realY = y - 1;
             int longueurShip = ship.getLongueurShip();
-            char labelShip = ship.getLabel();
             if (ship.getOrientation() == Direction.EAST) {
                 for (int i = 0; i < longueurShip; i++) {
                     if (realX + i < this.tailleGrille) {
                         if ((!this.hasShip(realX + i, realY))) {
-                            navires[realY][realX + i] = labelShip;
+                            this.navires[realY][realX + i] = new ShipState(ship, false);
                         } else {
                             throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + (realX + i) + " et y=" + realY);
                         }
@@ -119,7 +124,7 @@ public class Board implements IBoard {
                 for (int i = 0; i < longueurShip; i++) {
                     if (realX - i >= 0) {
                         if ((!this.hasShip(realX - i, realY))) {
-                            navires[realY][realX - i] = labelShip;
+                            navires[realY][realX - i] = new ShipState(ship, false);
                         } else {
                             throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + (realX - i) + " et y=" + realY);
                         }
@@ -131,7 +136,7 @@ public class Board implements IBoard {
                 for (int i = 0; i < longueurShip; i++) {
                     if (realY + i < this.tailleGrille) {
                         if ((!this.hasShip(realX, realY + i))) {
-                            navires[realY + i][realX] = labelShip;
+                            navires[realY + i][realX] = new ShipState(ship, false);
                         } else {
                             throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + realX + " et y=" + (realY + i));
                         }
@@ -143,7 +148,7 @@ public class Board implements IBoard {
                 for (int i = 0; i < longueurShip; i++) {
                     if (realY - i >= 0) {
                         if ((!this.hasShip(realX, realY - i))) {
-                            navires[realY - i][realX] = labelShip;
+                            navires[realY - i][realX] = new ShipState(ship, false);
                         } else {
                             throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + realX + " et y=" + (realY - i));
                         }
@@ -165,6 +170,9 @@ public class Board implements IBoard {
     public void setHit(boolean hit, int x, int y) {
         hit = navires[y - 1][x - 1] != null;
         frappes[y - 1][x - 1] = hit;
+        if(hit){
+            this.navires[y-1][x-1].addStrike();
+        }
     }
 
     @Override
