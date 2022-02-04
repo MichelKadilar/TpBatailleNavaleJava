@@ -40,19 +40,26 @@ public class Game {
     public Game init() {
         if (!loadSave()) {
             // init attributes
-            System.out.println("entre ton nom:");
+            System.out.println("entre ton nom, joueur 1 :");
             // TODO use a scanner to read player name
             sin = new Scanner(System.in);
             String userName = sin.nextLine();
+            System.out.println("entre ton nom, joueur 2 :");
+            String userName2 = sin.nextLine();
             // TODO init boards
             Board b1 = new Board(userName);
-            Board b2 = new Board("IA");
+            Board b2 = new Board(userName2);
             // TODO init this.player1 & this.player2
             this.player1 = new Player(b1, b2, createDefaultShips());
-            this.player2 = new AIPlayer(b2, b1, createDefaultShips());
+            this.player2 = new Player(b2, b1, createDefaultShips());
+            System.out.println("Board du joueur : " + userName);
             b1.print();
+            System.out.println("Board du joueur : " + userName2);
+            b2.print();
             // place player ships
+            System.out.println("Veuillez placer vos bateaux, " + userName);
             player1.putShips();
+            System.out.println("Veuillez placer vos bateaux, " + userName2);
             player2.putShips();
         }
         return this;
@@ -64,6 +71,7 @@ public class Game {
     public void run() throws ShipStruckAtSamePosError {
         int[] coords = new int[2];
         Board b1 = player1.board;
+        Board b2 = player2.board;
         Hit hit;
 
         // main loop
@@ -83,15 +91,13 @@ public class Game {
 
             if (!done && !strike) {
                 do {
+                    System.out.println("Nom du joueur 2 : " + b2.nom);
                     hit = this.player2.sendHit(coords); // TODO player2 send a hit.
-                    b1.print();
                     strike = hit != Hit.MISS;
-                    if (strike) {
-                        b1.print();
-                    }
-                    System.out.println(makeHitMessage(true /* incoming hit */, coords, hit));
+                    b2.setHit(strike, coords[0], coords[1]);
                     done = updateScore();
-
+                    b2.print();
+                    System.out.println(makeHitMessage(true /* incoming hit */, coords, hit));
                     if (!done) {
                         save();
                     }
