@@ -2,7 +2,9 @@ package ships;
 
 import board.ShipStruckTooManyTimesError;
 
-public abstract class AbstractShip {
+import java.io.Serializable;
+
+public abstract class AbstractShip implements Serializable {
     private char label;
     private String shipName;
     private int longueurShip;

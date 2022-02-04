@@ -3,7 +3,9 @@ package ships;
 import board.ShipStruckTooManyTimesError;
 import color.ColorUtil;
 
-public class ShipState {
+import java.io.Serializable;
+
+public class ShipState implements Serializable {
 
     private AbstractShip abstractShip;
     private boolean struck;

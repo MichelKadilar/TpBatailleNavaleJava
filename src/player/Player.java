@@ -6,10 +6,11 @@ import board.ShipStruckAtSamePosError;
 import ships.AbstractShip;
 import ships.Direction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player implements Serializable {
     /* **
      * Attributs
      * Ils sont en visibilité protected car un joueur doit pouvoir prévenir l'adversaire qu'il l'attaque à certaines coordonnées.

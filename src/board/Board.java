@@ -5,7 +5,9 @@ import ships.AbstractShip;
 import ships.Direction;
 import ships.ShipState;
 
-public class Board implements IBoard {
+import java.io.Serializable;
+
+public class Board implements IBoard, Serializable {
     public String nom;
     private ShipState[][] navires; // Afin que seule cette classe ait accès à ce tableau 2D
     private Boolean[][] frappes; // Idem

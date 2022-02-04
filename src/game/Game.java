@@ -82,7 +82,11 @@ public class Game {
             b1.print();
             hit = this.player1.sendHit(coords); // TODO player1 send a hit
             boolean strike = hit != Hit.MISS; // TODO set this hit on his board (b1)
-            b1.setHit(strike, coords[0], coords[1]);
+            try {
+                b1.setHit(strike, coords[0], coords[1]);
+            } catch (ShipStruckAtSamePosError e) {
+                e.printStackTrace();
+            }
             done = updateScore();
             b1.print();
             System.out.println(makeHitMessage(false /* outgoing hit */, coords, hit));
@@ -94,7 +98,11 @@ public class Game {
                     System.out.println("Nom du joueur 2 : " + b2.nom);
                     hit = this.player2.sendHit(coords); // TODO player2 send a hit.
                     strike = hit != Hit.MISS;
-                    b2.setHit(strike, coords[0], coords[1]);
+                    try {
+                        b2.setHit(strike, coords[0], coords[1]);
+                    } catch (ShipStruckAtSamePosError e) {
+                        e.printStackTrace();
+                    }
                     done = updateScore();
                     b2.print();
                     System.out.println(makeHitMessage(true /* incoming hit */, coords, hit));
@@ -113,28 +121,31 @@ public class Game {
 
 
     private void save() {
-        /*try {
+        try {
             // TODO bonus 2 : uncomment
-            //  if (!SAVE_FILE.exists()) {
-            //      SAVE_FILE.getAbsoluteFile().getParentFile().mkdirs();
-            //  }
-
+            if (!SAVE_FILE.exists()) {
+                SAVE_FILE.getAbsoluteFile().getParentFile().mkdirs();
+            }
             // TODO bonus 2 : serialize players
-
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SAVE_FILE));
+            oos.writeObject(player1);
+            oos.writeObject(player2);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     private boolean loadSave() {
         if (SAVE_FILE.exists()) {
-            /*try {
+            try {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_FILE));
                 // TODO bonus 2 : deserialize players
-
+                this.player1 = (Player) ois.readObject(); // On garde le même ordre que lors de la serialisation des players
+                this.player2 = (Player) ois.readObject();
                 return true;
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
-            }*/
+            }
         }
         return false;
     }
