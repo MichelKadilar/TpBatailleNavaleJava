@@ -25,6 +25,7 @@ public class Game {
     /* ***
      * Attributs
      */
+    private static Game singleton = new Game();
     private Player player1;
     private Player player2;
     private Scanner sin;
@@ -32,7 +33,8 @@ public class Game {
     /* ***
      * Constructeurs
      */
-    public Game() {
+    private Game() {
+        // Je laisse ce constructeur vide car on initialise tout dans init, qui renvoie l'instance courante de la classe Game, utilisée par la méthode run().
     }
 
     public Game init() {
@@ -46,10 +48,8 @@ public class Game {
             Board b1 = new Board(userName);
             Board b2 = new Board("IA");
             // TODO init this.player1 & this.player2
-            AbstractShip[] abstractShips = {new Destroyer(), new Submarine(), new Submarine(), new Battleship(), new Carrier()};
-            AbstractShip[] abstractShips2 = {new Destroyer(), new Submarine(), new Submarine(), new Battleship(), new Carrier()};
-            this.player1 = new Player(b1, b2, Arrays.asList(abstractShips));
-            this.player2 = new AIPlayer(b2, b1, Arrays.asList(abstractShips2));
+            this.player1 = new Player(b1, b2, createDefaultShips());
+            this.player2 = new AIPlayer(b2, b1, createDefaultShips());
             b1.print();
             // place player ships
             player1.putShips();
@@ -177,6 +177,14 @@ public class Game {
     }
 
     public static void main(String args[]) throws ShipStruckAtSamePosError {
-        new Game().init().run();
+        Game game = Game.getInstance();
+        game.init().run();
+    }
+
+    public static Game getInstance() {
+        if (singleton == null) {
+            singleton = new Game();
+        }
+        return singleton;
     }
 }
