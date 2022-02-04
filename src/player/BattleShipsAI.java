@@ -64,19 +64,18 @@ public class BattleShipsAI implements Serializable {
      */
     public void putShips(AbstractShip[] ships) {
         int x, y;
-        Direction o;
         Random rnd = new Random();
         Direction[] orientations = Direction.values();
 
-        for (AbstractShip s : ships) {
-            do { // TODO use Random to pick a random x, y & orientation
-                x = rnd.nextInt(this.board.getSize());
-                y = rnd.nextInt(this.board.getSize());
-                o = orientations[rnd.nextInt(4)];
-                s.setOrientation(o);
-            } while (!canPutShip(s, x, y));
+        for (AbstractShip s : ships) { // Parcours des navires à placer sur le board
+            do { // Faire ce qui suit
+                // TODO use Random to pick a random x, y & orientation
+                x = rnd.nextInt(size); // Renvoie 0 <= x < size
+                y = rnd.nextInt(size); // Renvoie 0 <= y < size
+                s.setOrientation(orientations[rnd.nextInt(orientations.length)]); // Change l'orientation d'un navire selon un nombre aléatoire compris entre 0 et la longueur du tableau des orientations possibles
+            } while (!canPutShip(s, x, y)); // Tant qu'il n'est pas possible de placer le navire courant
             try {
-                board.putShip(s, x, y);
+                board.putShip(s, x, y); // On place le navire courant à des coordonnées valides.
             } catch (Exception e) {
                 // Je ne complète pas ici afin que le jeu prenne fin dans le cas où un bateau est mal placé (limite du terrain de jeu ou superposition avec une autre navire)
             }
@@ -200,8 +199,8 @@ public class BattleShipsAI implements Serializable {
         int y;
 
         do {
-            x = rnd.nextInt(size);
-            y = rnd.nextInt(size);
+            x = rnd.nextInt(size); // Renvoie 0 <= x < size
+            y = rnd.nextInt(size); // Renvoie 0 <= y < size
         } while (!isUndiscovered(x, y));
 
         return new int[]{x, y};

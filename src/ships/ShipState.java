@@ -13,10 +13,10 @@ public class ShipState {
         this.struck = struck;
     }
 
-    public void addStrike() {
-        this.struck = true;
+    public void addStrike() { // On ajoute un tir effectué sur un bateau
+        this.struck = true; // Si on a tiré une fois sur un bateau, il est touché
         try {
-            this.abstractShip.addStrike();
+            this.abstractShip.addStrike(); // On ajoute un tir effectué sur un navire
         } catch (ShipStruckTooManyTimesError e) {
             System.out.println("Navire touché trop de fois : " + this.abstractShip.getShipName());
         }
@@ -26,8 +26,8 @@ public class ShipState {
         return this.struck;
     }
 
-    public String toString() {
-        if (isStruck()) {
+    public String toString() { // On affiche le label d'un navire en rouge s'il est touché à tel endroit, sinon on l'affiche en blanc.
+        if (isStruck()) { // Le navire est-il touché ?
             return ColorUtil.colorize(this.abstractShip.getLabel(), ColorUtil.Color.RED);
         } else {
             return String.valueOf(this.abstractShip.getLabel());

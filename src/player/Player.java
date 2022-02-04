@@ -12,6 +12,7 @@ import java.util.List;
 public class Player {
     /* **
      * Attributs
+     * Ils sont en visibilité protected car un joueur doit pouvoir prévenir l'adversaire qu'il l'attaque à certaines coordonnées.
      */
     protected Board board;
     protected Board opponentBoard;
@@ -47,7 +48,7 @@ public class Player {
             InputHelper.ShipInput res;
             // TODO set ship orientation
             // TODO put ship at given position
-            while (inputOk != 1) {
+            while (inputOk != 1) { // Tant qu'on n'arrive pas à placer ce navire, on redemande au joueur de placer ce navire
                 try {
                     res = InputHelper.readShipInput();
                     s.setOrientation(Direction.orientationStringToDirection(res.orientation));
@@ -65,17 +66,17 @@ public class Player {
         } while (!done);
     }
 
-    public Hit sendHit(int[] coord) throws ShipStruckAtSamePosError {
+    public Hit sendHit(int[] coord) {
         boolean done;
         Hit hit = null;
         do {
             System.out.println("où frapper?");
             InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
             // TODO call sendHit on this.opponentBoard
-            hit = this.opponentBoard.sendHit(hitInput.x-1, hitInput.y-1);
+            hit = this.opponentBoard.sendHit(hitInput.x - 1, hitInput.y - 1);
             // TODO : Game expects sendHit to return BOTH hit result & hit coords.
-            coord[0] = hitInput.x-1;
-            coord[1] = hitInput.y-1;
+            coord[0] = hitInput.x - 1;
+            coord[1] = hitInput.y - 1;
             done = hit != null;
             // return hit is obvious. But how to return coords at the same time ?
         } while (!done);
