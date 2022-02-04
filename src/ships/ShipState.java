@@ -8,7 +8,7 @@ public class ShipState {
     private AbstractShip abstractShip;
     private boolean struck;
 
-    public ShipState(AbstractShip abstractShip, boolean struck){
+    public ShipState(AbstractShip abstractShip, boolean struck) {
         this.abstractShip = abstractShip;
         this.struck = struck;
     }
@@ -20,7 +20,6 @@ public class ShipState {
         } catch (ShipStruckTooManyTimesError e) {
             System.out.println("Navire touché trop de fois : " + this.abstractShip.getShipName());
         }
-
     }
 
     public boolean isStruck() {

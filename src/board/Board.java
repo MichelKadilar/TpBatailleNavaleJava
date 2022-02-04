@@ -13,7 +13,11 @@ public class Board implements IBoard {
 
     public Board(String nom, int tailleGrille) {
         this.nom = nom;
-        this.tailleGrille = tailleGrille;
+        if (tailleGrille >= 10) {
+            this.tailleGrille = tailleGrille;
+        } else {
+            this.tailleGrille = 10;
+        }
         navires = new ShipState[this.tailleGrille][this.tailleGrille];
         frappes = new Boolean[this.tailleGrille][this.tailleGrille];
     }
@@ -44,7 +48,7 @@ public class Board implements IBoard {
             int j = 0;
             if (i == this.tailleGrille - 1) {
                 if (navires[i][j] != null) {
-                    System.out.print(" " + navires[i][j].getShip().getLabel());
+                    System.out.print(" " + navires[i][j].toString());
                 } else {
                     System.out.print(" .");
                 }
@@ -52,7 +56,7 @@ public class Board implements IBoard {
             }
             while (j < this.tailleGrille) {
                 if (navires[i][j] != null) {
-                    System.out.print("  " + navires[i][j].getShip().getLabel());
+                    System.out.print("  " + navires[i][j].toString());
                 } else {
                     System.out.print("  .");
                 }
@@ -62,7 +66,7 @@ public class Board implements IBoard {
         }
     }
 
-    public void printGrilleFrappe() {
+    private void printGrilleFrappe() {
         System.out.println("Frappes :");
         char[] tabAlphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
         System.out.print("   ");
@@ -104,99 +108,87 @@ public class Board implements IBoard {
 
     @Override
     public void putShip(AbstractShip ship, int x, int y) throws ShipPosOutOfBoardError, ShipSuperpositionError {
-        if (x > 0 && y > 0) {
-            int realX = x - 1;
-            int realY = y - 1;
+        if (x >= 0 && y >= 0) {
             int longueurShip = ship.getLongueurShip();
             if (ship.getOrientation() == Direction.EAST) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realX + i < this.tailleGrille) {
-                        if ((!this.hasShip(realX + i, realY))) {
-                            this.navires[realY][realX + i] = new ShipState(ship, false);
+                    if (x + i < this.tailleGrille) {
+                        if ((!this.hasShip(x + i, y))) {
+                            this.navires[y][x + i] = new ShipState(ship, false);
                         } else {
-                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + (realX + i) + " et y=" + realY);
+                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + (x + i) + " et y=" + y);
                         }
                     } else {
-                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + (realX + i) + " et y=" + realY);
+                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + (x + i) + " et y=" + y);
                     }
                 }
             } else if (ship.getOrientation() == Direction.WEST) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realX - i >= 0) {
-                        if ((!this.hasShip(realX - i, realY))) {
-                            navires[realY][realX - i] = new ShipState(ship, false);
+                    if (x - i >= 0) {
+                        if ((!this.hasShip(x - i, y))) {
+                            navires[y][x - i] = new ShipState(ship, false);
                         } else {
-                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + (realX - i) + " et y=" + realY);
+                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + (x - i) + " et y=" + y);
                         }
                     } else {
-                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + (realX - i) + " et y=" + realY);
-                    }
-                }
-            } else if (ship.getOrientation() == Direction.NORTH) {
-                for (int i = 0; i < longueurShip; i++) {
-                    if (realY + i < this.tailleGrille) {
-                        if ((!this.hasShip(realX, realY + i))) {
-                            navires[realY + i][realX] = new ShipState(ship, false);
-                        } else {
-                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + realX + " et y=" + (realY + i));
-                        }
-                    } else {
-                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + realX + " et y=" + (realY + i));
+                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + (x - i) + " et y=" + y);
                     }
                 }
             } else if (ship.getOrientation() == Direction.SOUTH) {
                 for (int i = 0; i < longueurShip; i++) {
-                    if (realY - i >= 0) {
-                        if ((!this.hasShip(realX, realY - i))) {
-                            navires[realY - i][realX] = new ShipState(ship, false);
+                    if (y + i < this.tailleGrille) {
+                        if ((!this.hasShip(x, y + i))) {
+                            navires[y + i][x] = new ShipState(ship, false);
                         } else {
-                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + realX + " et y=" + (realY - i));
+                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + x + " et y=" + (y + i));
                         }
                     } else {
-                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + realX + " et y=" + (realY - i));
+                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + x + " et y=" + (y + i));
+                    }
+                }
+            } else if (ship.getOrientation() == Direction.NORTH) {
+                for (int i = 0; i < longueurShip; i++) {
+                    if (y - i >= 0) {
+                        if ((!this.hasShip(x, y - i))) {
+                            navires[y - i][x] = new ShipState(ship, false);
+                        } else {
+                            throw new ShipSuperpositionError("Votre navire : " + ship.getShipName() + " Se superpose sur un autre aux positions : x=" + x + " et y=" + (y - i));
+                        }
+                    } else {
+                        throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + x + " et y=" + (y - i));
                     }
                 }
             }
+        } else {
+            throw new ShipPosOutOfBoardError("Votre navire : " + ship.getShipName() + " Sort du terrain aux positions : x=" + x + " et y=" + y);
         }
     }
 
     @Override
-    public boolean hasShip(int x, int y) { // L'écart de -1 dans les coordonnées est pris en compte directement dans la méthode putShip()
-        // Avec realX et realY.
-        if (navires[y][x] == null || navires[y][x].getShip().isSunk()) {
-            return false;
-        } else {
-            return true;
-        }
+    public boolean hasShip(int x, int y) { // L'écart de -1 dans les coordonnées est pris en compte directement lors de l'appel à cette fonction
+        return navires[y][x] != null && !navires[y][x].getShip().isSunk();
     }
 
     @Override
     public void setHit(boolean hit, int x, int y) throws ShipStruckAtSamePosError {
-        if (frappes[y - 1][x - 1] != null) {
-            throw new ShipStruckAtSamePosError("Le navire : " + navires[y - 1][x - 1].getShip().getShipName() + " de votre adversaire a déjà été touché aux positions x = " + x + " et y = " + y);
-        }
-        hit = navires[y - 1][x - 1] != null;
-        frappes[y - 1][x - 1] = hit;
-        if (hit) {
-            this.navires[y - 1][x - 1].addStrike();
+        if (frappes[y][x] != null) {
+            throw new ShipStruckAtSamePosError("Vous avez déjà tiré aux positions x = " + x + " et y = " + y);
+        } else {
+            frappes[y][x] = hit;
         }
     }
 
     @Override
     public Boolean getHit(int x, int y) {
-        return frappes[y - 1][x - 1];
+        return frappes[y][x];
     }
 
     @Override
-    public Hit sendHit(int x, int y) throws ShipStruckAtSamePosError {
-        try {
-            this.setHit(false, x, y);
-        } catch (ShipStruckAtSamePosError e) {
-            System.out.println("Votre tir aux coordonnées x = " + x + " et y = " + y + " n'est pas valide car vous l'avez déjà réalisé auparavant");
-        }
-        if (Boolean.TRUE.equals(this.getHit(x, y))) {
-            char currentShipLabel = navires[y - 1][x - 1].getShip().getLabel();
-            boolean isCurrentShipSunk = navires[y - 1][x - 1].isSunk();
+    public Hit sendHit(int x, int y) {
+        if (navires[y][x] != null) {
+            char currentShipLabel = navires[y][x].getShip().getLabel();
+            this.navires[y][x].addStrike();
+            boolean isCurrentShipSunk = navires[y][x].getShip().isSunk();
             if (currentShipLabel == 'D') {
                 if (isCurrentShipSunk) {
                     return Hit.DESTROYER;

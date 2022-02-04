@@ -36,7 +36,7 @@ public class Player {
      * Read keyboard input to get ships coordinates. Place ships on given coodrinates.
      */
     public void putShips() {
-        boolean done = false;
+        boolean done;
         int i = 0;
 
         do {
@@ -72,10 +72,10 @@ public class Player {
             System.out.println("où frapper?");
             InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
             // TODO call sendHit on this.opponentBoard
-            hit = this.opponentBoard.sendHit(hitInput.x, hitInput.y);
+            hit = this.opponentBoard.sendHit(hitInput.x-1, hitInput.y-1);
             // TODO : Game expects sendHit to return BOTH hit result & hit coords.
-            coord[0] = hitInput.x;
-            coord[1] = hitInput.y;
+            coord[0] = hitInput.x-1;
+            coord[1] = hitInput.y-1;
             done = hit != null;
             // return hit is obvious. But how to return coords at the same time ?
         } while (!done);
