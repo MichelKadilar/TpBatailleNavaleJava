@@ -14,11 +14,11 @@ public class Player {
      * Attributs
      * Ils sont en visibilité protected car un joueur doit pouvoir prévenir l'adversaire qu'il l'attaque à certaines coordonnées.
      */
-    protected Board board;
+    public Board board; // Public pour qu'il soit accessible dans la classe Game qui n'est pas dans le même package
     protected Board opponentBoard;
-    protected int destroyedCount;
+    public int destroyedCount;
     protected AbstractShip[] ships;
-    protected boolean lose;
+    public boolean lose; // Public pour qu'il soit accessible dans la classe Game
 
     /* **
      * Constructeur
@@ -66,17 +66,17 @@ public class Player {
         } while (!done);
     }
 
-    public Hit sendHit(int[] coord) {
+    public Hit sendHit(int[] coord) throws ShipStruckAtSamePosError {
         boolean done;
         Hit hit = null;
         do {
             System.out.println("où frapper?");
             InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
             // TODO call sendHit on this.opponentBoard
-            hit = this.opponentBoard.sendHit(hitInput.x - 1, hitInput.y - 1);
+            hit = this.opponentBoard.sendHit(hitInput.x, hitInput.y);
             // TODO : Game expects sendHit to return BOTH hit result & hit coords.
-            coord[0] = hitInput.x - 1;
-            coord[1] = hitInput.y - 1;
+            coord[0] = hitInput.x;
+            coord[1] = hitInput.y;
             done = hit != null;
             // return hit is obvious. But how to return coords at the same time ?
         } while (!done);
